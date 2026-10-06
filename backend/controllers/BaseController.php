@@ -4,21 +4,12 @@ require_once __DIR__ . '/../config/Config.php';
 
 class BaseController {
 
+
     protected function sendResponse($data, $statusCode = 200) {
         http_response_code($statusCode);
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
-        $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-        if (in_array($origin, Config::ALLOWED_ORIGINS, true)) {
-            header("Access-Control-Allow-Origin: $origin");
-        } else {
-            header("Access-Control-Allow-Origin: " . Config::ALLOWED_ORIGINS[0]);
-        }
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
-        header('Access-Control-Allow-Credentials: true');
-
-        echo json_encode($data);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 

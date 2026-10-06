@@ -10,6 +10,7 @@ import Questions from "./pages/Questions";
 import Contact from "./pages/Contact";
 import AuthSystem from "./auth/AuthSystem";
 import Cart from "./components/Cart";
+import Orders from "./pages/Orders";
 import ScrollToTop from "./components/ScrollToTop";
 import CheckoutPage from "./components/Checkout";
 import { useCart } from "./context/CartContext";
@@ -52,6 +53,7 @@ function App() {
         <Products />
         <Questions />
         <Contact />
+        <Orders />
         <Cart display={cart} closeCart={closeCart} openCheckout={openCheckout} />
         <CheckoutPage display={checkout} closeCheckout={closeCheckout} />
         <div className="main-btns">

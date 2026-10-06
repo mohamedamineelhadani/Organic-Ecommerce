@@ -1,8 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { ArrowUpRight, Apple, Instagram, Twitter, Facebook } from "lucide-react";
 import { Link } from "react-scroll";
+import { subscriptionService } from "../services/subscriptionService";
+import { useToast } from "../context/ToastContext";
 
 const Footer = () => {
+  const toast = useToast();
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+
+    const trimmed = email.trim();
+    if (!trimmed) {
+      toast.warning("Please enter your email");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmed)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await subscriptionService.subscribe(trimmed);
+      if (res.success) {
+        toast.success(res.message || "Subscribed successfully!");
+        setEmail("");
+      } else {
+        toast.error(res.message || "Subscription failed");
+      }
+    } catch (err) {
+      toast.error(err.message || "Something went wrong. Try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -11,12 +48,26 @@ const Footer = () => {
             <Apple className="icon" /> Organic
           </Link>
           <h3 className="footer-title">Subscribe to our newsletter</h3>
-          <div className="footer-subscribe">
-            <input type="email" placeholder="Enter your email" className="footer-input" />
-            <button className="subscribe-btn">
-              Subscribe <ArrowUpRight className="icon" />
+
+          <form className="footer-subscribe" onSubmit={handleSubscribe}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="footer-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
+              required
+            />
+            <button
+              type="submit"
+              className="subscribe-btn"
+              disabled={isLoading}
+            >
+              {isLoading ? "..." : "Subscribe"}
+              <ArrowUpRight className="icon" />
             </button>
-          </div>
+          </form>
         </div>
 
         <div className="footer-content">

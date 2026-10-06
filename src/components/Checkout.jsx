@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { CreditCard, MapPin, User, Banknote, Lock, CheckCircle2, X } from 'lucide-react';
 import "./Checkout.css";
 import { orderService } from '../services/orderService';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import defaultImg from "../assets/images/default.png";
 
 const CheckoutPage = ({ display, closeCheckout }) => {
   const { isAuthenticated, user } = useAuth();
@@ -24,9 +25,24 @@ const CheckoutPage = ({ display, closeCheckout }) => {
     expiryDate: '',
     cvv: ''
   });
+
+
+  useEffect(() => {
+    if(user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: user.full_name || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      }));
+    }
+  }, [user, display]);
+
+
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderResult, setOrderResult] = useState(null);
+
 
   const subtotal = cartTotal;
   const tax = subtotal * 0.08;
@@ -184,7 +200,7 @@ const CheckoutPage = ({ display, closeCheckout }) => {
                 <div className="form-group">
                   <label>Full Name *</label>
                   <input type="text" name="fullName" value={formData.fullName}
-                    onChange={handleInputChange} placeholder="John Doe"
+                    onChange={handleInputChange} placeholder="Mohamed Ali"
                     className={errors.fullName ? 'error' : ''} />
                   {errors.fullName && <span className="error-msg">{errors.fullName}</span>}
                 </div>
@@ -334,7 +350,7 @@ const CheckoutPage = ({ display, closeCheckout }) => {
                     fontSize: '1.5rem', overflow: 'hidden' }}>
                     {item.image
                       ? <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : '🥬'}
+                      : <img src={defaultImg} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> }
                   </div>
                   <div className="item-info">
                     <h4>{item.name}</h4>

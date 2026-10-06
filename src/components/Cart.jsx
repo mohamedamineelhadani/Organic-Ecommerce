@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import defaultImg from "../assets/images/default.png";
 import "./Cart.css";
 
 const Cart = ({ display, closeCart, openCheckout }) => {
@@ -62,7 +63,7 @@ const Cart = ({ display, closeCart, openCheckout }) => {
                 {item.image ? (
                   <img src={item.image} alt={item.name}
                     style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "12px" }} />
-                ) : "🥬"}
+                ) : <img src={defaultImg} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> }
               </div>
 
               <div className="cart-item-details">

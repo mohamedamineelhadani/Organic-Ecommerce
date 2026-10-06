@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-scroll";
-import { Sun, Moon, Apple, User, LogOut, Package } from "lucide-react";
+import { Sun, Moon, Apple, User, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const Header = ({ openLogin }) => {
@@ -17,9 +17,11 @@ const Header = ({ openLogin }) => {
   const menuItems = [
     { to: "home", label: "Home" },
     { to: "about", label: "About" },
+    { to: "steps", label: "Steps" },
     { to: "products", label: "Products" },
     { to: "questions", label: "FAQs" },
     { to: "contact", label: "Contact Us" },
+    { to: "orders", label: "Orders" },
   ];
 
   const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -95,11 +97,6 @@ const Header = ({ openLogin }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleOrdersClick = () => {
-    setUserMenuOpen(false);
-    const el = document.getElementById('orders');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   return (
     <header className={`header ${scrolled ? "scrolled" : ""}`} id="header">
@@ -151,17 +148,6 @@ const Header = ({ openLogin }) => {
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-color-light)', margin: 0 }}>Signed in as</p>
                   <p style={{ fontWeight: 600, margin: '0.25rem 0 0 0', fontSize: '0.9rem' }}>{user?.full_name}</p>
                 </div>
-                <button
-                  onClick={handleOrdersClick}
-                  style={{
-                    width: '100%', textAlign: 'left', padding: '0.65rem 0.75rem',
-                    display: 'flex', alignItems: 'center', gap: '0.5rem',
-                    background: 'none', border: 'none', borderRadius: 8,
-                    cursor: 'pointer', color: 'var(--text-color)', fontSize: '0.9rem'
-                  }}
-                >
-                  <Package size={18} /> My Orders
-                </button>
                 <button
                   onClick={handleLogout}
                   style={{

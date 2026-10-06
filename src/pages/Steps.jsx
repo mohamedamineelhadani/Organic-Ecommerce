@@ -2,7 +2,7 @@ import React from "react";
 
 const Steps = () => {
   return (
-    <section className="steps">
+    <section className="steps" id="steps">
       <div className="steps-bg">
         <h2 className="steps-title">
           Steps To Start Your <br /> Products Collection

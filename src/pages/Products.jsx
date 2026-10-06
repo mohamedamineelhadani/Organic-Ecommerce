@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ShoppingBag, ArrowDownRight, ChevronUp } from "lucide-react";
-import defaultImg from "../assets/images/home.png";
+import defaultImg from "../assets/images/default.png";
 import { productService } from "../services/productService";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useToast } from '../context/ToastContext';
+
 
 const normalize = (p) => ({
   id: p.id,
@@ -34,6 +36,7 @@ const Products = () => {
 
   const { isAuthenticated } = useAuth();
   const { addItem } = useCart();
+  const toast = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,25 +92,18 @@ const Products = () => {
 
   const handleAddToCart = async (product) => {
     if (!isAuthenticated) {
-      alert('Please login to add items to cart');
+      toast.error('Please login to add items to cart');
       return;
     }
     try {
       setAddingId(product.id);
       await addItem(product.id, 1);
+      toast.success(`${product.name} added to cart`);
     } catch (err) {
-      alert(err.message || 'Failed to add to cart');
+      toast.error(err.message || 'Failed to add to cart');
     } finally {
       setAddingId(null);
     }
-  };
-
-  const productCount = (c) => allProducts.filter(p => p.category === c).length;
-
-  const categoryGroups = {
-    fruits: ["Berries", "Tree Fruits", "Tropical Fruits", "Citrus", "Exotic Fruits"],
-    vegetables: ["Leafy Greens", "Root Vegetables", "Cruciferous", "Nightshades", "Alliums", "Cucurbits", "Stem Vegetables"],
-    specialty: ["Herbs", "Fungi", "Specialty Greens"]
   };
 
   return (
@@ -126,21 +122,9 @@ const Products = () => {
           <select className="category-select" value={category}
             onChange={(e) => setCategory(e.target.value)}>
             <option value="All">All</option>
-            <optgroup label="Fruits">
-              {categoryGroups.fruits.map(c => (
-                <option key={c} value={c}>{c} ({productCount(c)})</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.name}>{c.name} ({c.product_count})</option>
               ))}
-            </optgroup>
-            <optgroup label="Vegetables">
-              {categoryGroups.vegetables.map(c => (
-                <option key={c} value={c}>{c} ({productCount(c)})</option>
-              ))}
-            </optgroup>
-            <optgroup label="Specialty">
-              {categoryGroups.specialty.map(c => (
-                <option key={c} value={c}>{c} ({productCount(c)})</option>
-              ))}
-            </optgroup>
           </select>
         </div>
         <div className="sort-by">

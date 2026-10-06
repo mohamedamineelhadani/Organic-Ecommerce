@@ -3,23 +3,27 @@ require_once __DIR__ . '/config/Config.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('log_errors', 0);
 
 
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 
 if (in_array($origin, Config::ALLOWED_ORIGINS, true)) {
     header("Access-Control-Allow-Origin: $origin");
+    header('Access-Control-Allow-Credentials: true');
 } else {
-    // Fallback for dev
-    header("Access-Control-Allow-Origin: " . Config::ALLOWED_ORIGINS[0]);
+    if (!empty($origin)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'CORS policy violation']);
+        exit;
+    }
 }
 
 
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Max-Age: 86400'); // cache preflight 24h
+header('Access-Control-Max-Age: 86400');
 header('Content-Type: application/json; charset=utf-8');
 
 
@@ -46,14 +50,18 @@ spl_autoload_register(function ($class) {
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $uri           = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+
+
+
 // Strip base path
-$basePath = '/ecom/backend';
-if (strpos($uri, $basePath) === 0) {
-    $uri = substr($uri, strlen($basePath));
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+if ($scriptDir !== '/' && strpos($uri, $scriptDir) === 0) {
+    $uri = substr($uri, strlen($scriptDir));
 }
 
 $uri      = ltrim($uri, '/');
 $segments = array_values(array_filter(explode('/', $uri)));
+
 
 try {
     // Root
@@ -78,6 +86,10 @@ try {
                 'GET    /api/orders',
                 'GET    /api/orders?id={id}',
                 'GET    /api/orders?order_number={n}',
+                'POST   /api/subscriptions',
+                'GET    /api/subscriptions',
+                'POST   /api/contact',
+                'GET    /api/contact',
             ],
         ]);
         exit;
@@ -165,6 +177,31 @@ try {
         }
         exit;
     }
+
+
+    // ----- SUBSCRIPTIONS -----
+    if ($controller === 'subscriptions') {
+        $subs = new SubscriptionController();
+        if ($requestMethod === 'POST') {
+            $subs->subscribe();
+        } elseif ($requestMethod === 'GET') {
+            $subs->getAll();
+        }
+        exit;
+    }
+
+    // ----- CONTACT -----
+    if ($controller === 'contact') {
+        $contact = new ContactController();
+        if ($requestMethod === 'POST') {
+            $contact->send();
+        } elseif ($requestMethod === 'GET') {
+            $contact->getAll();
+        }
+        exit;
+    }
+
+
 
     http_response_code(404);
     echo json_encode(['success' => false, 'message' => 'Endpoint not found']);

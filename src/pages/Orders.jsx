@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Package, ChevronDown, ChevronUp, ShoppingBag } from "lucide-react";
 import { orderService } from "../services/orderService";
 import { useAuth } from "../context/AuthContext";
+import defaultImg from "../assets/images/default.png";
 import "./Orders.css";
 
 const Orders = () => {
@@ -113,7 +114,7 @@ const Orders = () => {
                           <div className="order-item-image">
                             {item.image
                               ? <img src={item.image} alt={item.product_name} />
-                              : '🥬'}
+                              : <img src={defaultImg} alt={item.product_name} />}
                           </div>
                           <div className="order-item-info">
                             <h4>{item.product_name}</h4>

@@ -31,7 +31,7 @@ class Product extends Model {
 
         if (!empty($filters['limit'])) {
             $limit = (int)$filters['limit'];
-            $query .= " LIMIT $limit"; // safe: cast to int
+            $query .= " LIMIT $limit";
         }
 
         return $this->fetchAll($query, $params);

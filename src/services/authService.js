@@ -1,6 +1,5 @@
 import api from './api';
 
-// Decode payload from "base64(payload).signature" token
 function decodeToken(token) {
   try {
     const [payloadPart] = token.split('.');
