@@ -1,0 +1,28 @@
+# PHP
+*.log
+*.cache
+.htpasswd
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Composer
+/vendor/
+composer.lock
+
+# Database backups
+*.sql.gz
+*.sql.bak
+
